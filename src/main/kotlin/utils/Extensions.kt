@@ -1,5 +1,7 @@
 package utils
 
+import javafx.scene.control.Alert
+import tornadofx.alert
 import java.security.MessageDigest
 
 fun String.Companion.encryptSHA256(text: String): String {
@@ -10,4 +12,9 @@ fun String.Companion.encryptSHA256(text: String): String {
             append(String.format("%02x", it))
         }
     }.toString()
+}
+
+fun <T> T.showPopUp(title: String, header: String, content: String) {
+    alert(Alert.AlertType.ERROR,title= title, header =  header, content =  content)
+
 }

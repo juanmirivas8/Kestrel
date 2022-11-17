@@ -1,2 +1,3 @@
 package model
 
+class Comment

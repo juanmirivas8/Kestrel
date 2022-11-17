@@ -1,5 +1,7 @@
 package controllers
 
-object Controller {
+import model.User
 
+object Controller {
+    var user: User = User("","")
 }
