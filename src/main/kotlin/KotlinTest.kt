@@ -1,12 +1,16 @@
+import model.User
+import utils.DBCredentials
 import utils.encryptSHA256
+import utils.marshall
+import utils.unmarshall
 
 enum class Color(val initial : Char) {
     RED('R'), GREEN('G'), BLUE('B'), YELLOW('Y'), WHITE('W'), PURPLE('P');
 }
 
 fun main(args: Array<String>) {
-    print(String.Companion.encryptSHA256("Hello Worl"))
 
+   marshall("src/main/resources/dbCredentials.xml",DBCredentials("kestrel","admin","terces","localhost","3306"))
     /*
     println("Secret key to guess")
     val key = String.readKey()
