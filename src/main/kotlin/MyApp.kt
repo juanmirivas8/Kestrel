@@ -1,6 +1,8 @@
 import tornadofx.*
+import views.Login
+import views.MyStyles
 
-class MyApp : App(Login::class) {
+class MyApp : App(Login::class, MyStyles::class){
     fun main(args: Array<String>) {
         launch<MyApp>(args)
     }
