@@ -14,7 +14,8 @@ fun String.Companion.encryptSHA256(text: String): String {
     }.toString()
 }
 
-fun <T> T.showPopUp(title: String, header: String, content: String) {
+fun <T> T.showPopUpError(title: String, header: String, content: String) =
     alert(Alert.AlertType.ERROR,title= title, header =  header, content =  content)
 
-}
+fun <T> T.showPopUpSuccess(title: String, header: String, content: String) =
+    alert(Alert.AlertType.CONFIRMATION,title= title, header =  header, content =  content)

@@ -10,9 +10,10 @@ import model.User
 import model.UserDAO
 import tornadofx.*
 import utils.encryptSHA256
-import utils.showPopUp
+import utils.showPopUpError
+import utils.showPopUpSuccess
 
-class Login : View("My View") {
+class Login : View("Login") {
 
     override val root = vbox {
         addClass(MyStyles.mainLogin)
@@ -20,10 +21,10 @@ class Login : View("My View") {
 
         lateinit var pf: PasswordField
         lateinit var uf: TextField
-        val controller : Controller = Controller
-        label {
-            addClass(MyStyles.loginLabel)
-            text = "Kestrel"
+        val controller = Controller
+        imageview("logo.png") {
+            fitHeight = 200.0
+            fitWidth = 200.0
         }
         form {
             fieldset(labelPosition = Orientation.HORIZONTAL) {
@@ -41,12 +42,21 @@ class Login : View("My View") {
                             val user = User(uf.text, String.encryptSHA256(pf.text))
                             val userDAO = UserDAO(user)
                             when{
-                                userDAO.validate(user.nickname, user.password)->{controller.user = userDAO}
+                                userDAO.validate(user.nickname, user.password)->{
+                                    controller.user = userDAO
+                                    uf.text = ""
+                                    pf.text = ""
+                                    replaceWith<Home>(ViewTransition.Slide(0.3.seconds, ViewTransition.Direction.DOWN))
+                                }
                                 uf.text.isNullOrBlank()|| pf.text.isNullOrBlank() -> {
-                                    showPopUp("Error", "Empty fields", "Please fill all the fields")
+                                    showPopUpError("Error", "Empty fields", "Please fill all the fields")
+                                    uf.text = ""
+                                    pf.text = ""
                                 }
                                 else -> {
-                                    showPopUp("Error", "Wrong credentials", "Please check your credentials")
+                                    showPopUpError("Error", "Wrong credentials", "Please check your credentials")
+                                    uf.text = ""
+                                    pf.text = ""
                                 }
                             }
                         }
@@ -55,9 +65,13 @@ class Login : View("My View") {
                         action {
                            val user = User(uf.text, String.encryptSHA256(pf.text))
                             if(UserDAO(user).create()){
-
+                                showPopUpSuccess("Success", "User created", "User created successfully")
+                                uf.text = ""
+                                pf.text = ""
                             }else{
-
+                                showPopUpError("Error", "User already exists", "Please try again")
+                                uf.text = ""
+                                pf.text = ""
                             }
                         }
                     }
