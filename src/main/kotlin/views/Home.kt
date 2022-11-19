@@ -4,6 +4,9 @@ import controllers.Controller
 import javafx.application.Platform
 import javafx.geometry.Pos
 import javafx.geometry.Side
+import javafx.scene.control.Label
+import javafx.scene.control.Menu
+import javafx.scene.layout.VBox
 import javafx.scene.text.FontWeight
 
 import model.User
@@ -13,32 +16,29 @@ import kotlin.concurrent.scheduleAtFixedRate
 
 class Home : View("Home") {
     private val controller : Controller = Controller
+    private lateinit var myPosts :VBox
+    private lateinit var signout : Menu
     init{
-            Timer().scheduleAtFixedRate(0, 1000) {
-                Platform.runLater { controller.refresh() }
+        Timer().scheduleAtFixedRate(0, 1000) {
+            Platform.runLater {
+                controller.refresh()
+                signout.text = controller.user.nickname
+                myPosts.bindChildren(controller.user.posts.toObservable()){
+                    PostView(it).root
+                }
             }
+        }
     }
     override val root = borderpane {
         prefHeight = 800.0
         prefWidth = 800.0
         top{
-            hbox(alignment = Pos.CENTER) {
-                label("Home") {
-                    style {
-                        fontSize = 30.px
-                        fontWeight = FontWeight.BOLD
-                    }
-                }
-                button { text = "Post"
-                    action{
-                        MakePostView().openModal()
-                    }
-                }
+            hbox(alignment = Pos.CENTER_RIGHT) {
                 menubar{
-                    menu(controller.user.nickname){
+                   signout=menu(controller.user.nickname){
                         item("Log Out").action{
                             replaceWith<Login>(ViewTransition.Slide(0.3.seconds, ViewTransition.Direction.DOWN))
-                            controller.user = User("","")
+                            resetEverything()
                         }
                     }
                 }
@@ -52,11 +52,7 @@ class Home : View("Home") {
                item("My Posts", expanded = true){
                    scrollpane {
                         isFitToWidth = true
-                        content= vbox{
-                           bindChildren(controller.observablePost){
-                               PostView(it).root
-                           }
-                       }
+                        myPosts = vbox{}
                    }
 
                }
@@ -64,9 +60,7 @@ class Home : View("Home") {
 
                }
                item("Commented Posts"){
-                   vbox{
-                       label("Groups")
-                   }
+
                }
            }
         }
@@ -104,8 +98,19 @@ class Home : View("Home") {
                         }
                     }
                 }
+
+                item ("Make Post"){
+                    addChildIfPossible(MakePostView().root)
+                }
+
+                item("Find People"){}
             }
         }
+    }
+
+    private fun resetEverything() {
+        controller.user = User("","")
+        myPosts.children.clear()
     }
 
 }

@@ -1,9 +1,16 @@
 package views
 
+import model.User
 import tornadofx.*
 
-class FollowView : Fragment("My View") {
+class FollowView(val user: User) : Fragment("My View") {
     override val root = hbox {
+        label{user.nickname}
 
+        button("Follow") {
+            action {
+
+            }
+        }
     }
 }

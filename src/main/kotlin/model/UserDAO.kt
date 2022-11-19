@@ -42,6 +42,9 @@ class UserDAO (user: User): User(nickname = user.nickname, password = user.passw
             this.nickname = rs.getString("nickname")
             this.password = rs.getString("password")
             this.posts = PostDAO.getAllPostsOfUser(this.id)
+            posts.forEach(){
+                it.user = this
+            }
             return true
         }
         return false

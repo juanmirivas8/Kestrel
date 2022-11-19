@@ -2,6 +2,8 @@ package model
 
 private const val SELECTALLPOSTSBYUSERID = "SELECT id, content, user_id, date, edited FROM post WHERE user_id = ?"
 private const val INSERT = "INSERT INTO post (content, user_id, date) VALUES (?,?,?)"
+private const val UPDATE = "UPDATE post SET content = ?, edited = ? WHERE id = ?"
+private const val DELETE = "DELETE FROM post WHERE id = ?"
 class PostDAO(post: Post) :Post(),CRUD{
     init{
         id = post.id
@@ -33,5 +35,14 @@ class PostDAO(post: Post) :Post(),CRUD{
         return this.id != 0
     }
 
+    override fun update(): Boolean {
+        val params = listOf(text, edited, id)
+        return executeUpdate(UPDATE, params,false) != 0
+    }
+
+    override fun delete(): Boolean {
+        val params = listOf(id)
+        return executeUpdate(DELETE, params,false) != 0
+    }
 
 }
