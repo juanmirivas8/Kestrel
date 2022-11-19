@@ -1,6 +1,7 @@
 package utils
 
 import javafx.scene.control.Alert
+import javafx.scene.layout.BorderPane
 import tornadofx.alert
 import java.security.MessageDigest
 
@@ -19,3 +20,4 @@ fun <T> T.showPopUpError(title: String, header: String, content: String) =
 
 fun <T> T.showPopUpSuccess(title: String, header: String, content: String) =
     alert(Alert.AlertType.CONFIRMATION,title= title, header =  header, content =  content)
+

@@ -9,14 +9,13 @@ class MyStyles : Stylesheet() {
     companion object{
         val loginLabel by cssclass()
         val mainLogin by cssclass()
-        val loginForm by cssclass()
     }
 
     init{
         mainLogin{
             backgroundColor += c("#B1FFF7")
-            prefHeight = 800.px
-            prefWidth = 800.px
+            prefHeight = 600.px
+            prefWidth = 600.px
             alignment = Pos.CENTER
         }
 

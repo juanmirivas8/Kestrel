@@ -14,8 +14,6 @@ class UserDAO (user: User): User(nickname = user.nickname, password = user.passw
         posts = user.posts
     }
 
-
-
     override fun create(): Boolean {
         val params = listOf(nickname, password)
         if(read(nickname)) return false
@@ -43,6 +41,7 @@ class UserDAO (user: User): User(nickname = user.nickname, password = user.passw
             this.id = rs.getInt("id")
             this.nickname = rs.getString("nickname")
             this.password = rs.getString("password")
+            this.posts = PostDAO.getAllPostsOfUser(this.id)
             return true
         }
         return false

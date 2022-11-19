@@ -23,8 +23,8 @@ class Login : View("Login") {
         lateinit var uf: TextField
         val controller = Controller
         imageview("logo.png") {
-            fitHeight = 200.0
-            fitWidth = 200.0
+            fitHeight = 300.0
+            fitWidth = 400.0
         }
         form {
             fieldset(labelPosition = Orientation.HORIZONTAL) {
