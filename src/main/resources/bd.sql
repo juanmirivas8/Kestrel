@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS `comment`(
                                         `id` int(11) NOT NULL AUTO_INCREMENT,
                                         `user_id` int(11) NOT NULL,
                                         `post_id` int(11) NOT NULL,
+                                        `content` varchar(255) NOT NULL,
                                         `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                                         PRIMARY KEY (`id`),
                                         CONSTRAINT `user_id_comment` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,

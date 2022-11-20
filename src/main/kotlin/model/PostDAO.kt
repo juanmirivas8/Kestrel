@@ -22,8 +22,12 @@ class PostDAO(post: Post) :Post(),CRUD{
             while (rs.next()) {
                 val post = Post(rs.getInt("id"), rs.getString("content"), UserDAO(User("", "")),
                     mutableListOf(), mutableListOf(), rs.getTimestamp("date").toLocalDateTime(), rs.getBoolean("edited"))
+                post.comments = CommentDAO.getAllCommentsOfPost(post.id)
+                post.comments.forEach { it.post = post }
                 posts.add(post)
             }
+
+
             return posts
         }
     }

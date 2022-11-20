@@ -3,7 +3,7 @@ package model
 import java.time.LocalDateTime
 
 open class Post(var id:Int = 0,var text:String = "",var user:User = User("",""),
-           var likes:MutableList<Like> = mutableListOf(),var comments:MutableList<Comment> = mutableListOf(),
+           var likes:MutableList<User> = mutableListOf(),var comments:MutableList<Comment> = mutableListOf(),
         var date:LocalDateTime = LocalDateTime.now(),var edited:Boolean = false){
 
     override fun equals(other: Any?): Boolean {

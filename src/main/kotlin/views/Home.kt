@@ -103,7 +103,9 @@ class Home : View("Home") {
                     addChildIfPossible(MakePostView().root)
                 }
 
-                item("Find People"){}
+                item("Find People"){
+                    addChildIfPossible(SearchView().root)
+                }
             }
         }
     }
