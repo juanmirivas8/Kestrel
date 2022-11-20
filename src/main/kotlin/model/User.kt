@@ -7,7 +7,6 @@ open class User(var nickname: String, var password: String){
     var posts = mutableListOf<Post>()
     var comments = mutableListOf<Post>()
 
-
     operator fun plusAssign(post : Post) {
        PostDAO(post).create()
     }
@@ -15,4 +14,19 @@ open class User(var nickname: String, var password: String){
     operator fun minusAssign(post : Post) {
         if(PostDAO(post).delete()) posts.remove(post)
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is User) return false
+
+        if (nickname != other.nickname) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return nickname.hashCode()
+    }
+
+
 }

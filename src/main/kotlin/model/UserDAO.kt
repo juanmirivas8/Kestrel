@@ -9,6 +9,7 @@ private const val SELECTALLFOLLOWERS = "SELECT id, nickname, password FROM user 
 private const val SELECTALLFOLLOWED = "SELECT id, nickname, password FROM user WHERE id IN (SELECT follow_id FROM follow WHERE user_id = ?)"
 private const val INSERTFOLLOW = "INSERT INTO follow (user_id, follow_id) VALUES (?,?)"
 private const val DELETEFOLLOW = "DELETE FROM follow WHERE user_id = ? AND follow_id = ?"
+private const val SELECTBYNICKNAMELIKE = "SELECT id, nickname, password FROM user WHERE nickname LIKE ? "
 
 class UserDAO (user: User): User(nickname = user.nickname, password = user.password),CRUD {
 
@@ -34,7 +35,21 @@ class UserDAO (user: User): User(nickname = user.nickname, password = user.passw
             val rs = executeQuery(SELECTALLUSERS, listOf())
             val users = mutableListOf<User>()
             while (rs.next()) {
-                users.add(User(rs.getString("nickname"), rs.getString("password")))
+               val u = User(rs.getString("nickname"), rs.getString("password"))
+                u.id = rs.getInt("id")
+                users.add(u)
+            }
+            return users
+        }
+
+        fun searchUser(nickname: String): List<User> {
+            val params = listOf("$nickname%")
+            val rs = executeQuery(SELECTBYNICKNAMELIKE, params)
+            val users = mutableListOf<User>()
+            while (rs.next()) {
+                val u = User(rs.getString("nickname"), rs.getString("password"))
+                u.id = rs.getInt("id")
+                users.add(u)
             }
             return users
         }
@@ -72,24 +87,29 @@ class UserDAO (user: User): User(nickname = user.nickname, password = user.passw
             }
             getAllFollowers()
             getAllFollowed()
+            comments = PostDAO.getAllCommentedPostsOfUser(this.id)
             return true
         }
         return false
     }
 
-    fun getAllFollowers(){
+    private fun getAllFollowers(){
         val params = listOf(id)
         val rs = executeQuery(SELECTALLFOLLOWERS, params)
         while (rs.next()) {
-            followers.add(User(rs.getString("nickname"), rs.getString("password")))
+            val u = User(rs.getString("nickname"), rs.getString("password"))
+            u.id = rs.getInt("id")
+            followers.add(u)
         }
     }
 
-    fun getAllFollowed(){
+    private fun getAllFollowed(){
         val params = listOf(id)
         val rs = executeQuery(SELECTALLFOLLOWED, params)
         while (rs.next()) {
-            followed.add(User(rs.getString("nickname"), rs.getString("password")))
+            val u = User(rs.getString("nickname"), rs.getString("password"))
+            u.id = rs.getInt("id")
+            followed.add(u)
         }
     }
 
@@ -110,5 +130,26 @@ class UserDAO (user: User): User(nickname = user.nickname, password = user.passw
         }
         return false
     }
+
+    fun refresh(){
+        this.posts = PostDAO.getAllPostsOfUser(this.id)
+        posts.forEach{
+            it.user = this
+        }
+        getAllFollowers()
+        getAllFollowed()
+        comments = PostDAO.getAllCommentedPostsOfUser(this.id)
+    }
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is UserDAO) return false
+        if (!super.equals(other)) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return super.hashCode()
+    }
+
 
 }

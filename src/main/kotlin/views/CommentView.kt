@@ -36,11 +36,11 @@ class CommentView(post: Post) : View("Comments") {
             val tf = textfield{}
             button("Comment"){
                 action{
-                    tf.text = ""
-                    val comment = Comment(text= tf.text,user = controller.user,post= post)
-                    val c =CommentDAO(comment)
+                    val comment = Comment(text= tf.text, user = controller.user, post = post)
+                    val c = CommentDAO(comment)
                     c.create()
                     oblist.add(c)
+                    tf.text = ""
                 }
             }
 

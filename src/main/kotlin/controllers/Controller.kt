@@ -7,9 +7,4 @@ import tornadofx.toObservable
 
 object Controller {
     var user: User = User("","")
-
-
-    fun refresh(){
-
-    }
 }
