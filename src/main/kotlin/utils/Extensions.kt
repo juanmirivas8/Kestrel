@@ -1,7 +1,6 @@
 package utils
 
 import javafx.scene.control.Alert
-import javafx.scene.layout.BorderPane
 import tornadofx.alert
 import java.security.MessageDigest
 
