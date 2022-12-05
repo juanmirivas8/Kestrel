@@ -7,7 +7,6 @@ import javafx.geometry.Pos
 import javafx.scene.control.PasswordField
 import javafx.scene.control.TextField
 import model.User
-import model.UserDAO
 import tornadofx.*
 import utils.encryptSHA256
 import utils.showPopUpError
@@ -40,13 +39,13 @@ class Login : View("Login") {
                     button("Login") {
                         action {
                             val user = User(uf.text, String.encryptSHA256(pf.text))
-                            val userDAO = UserDAO(user)
+                            val userDAO = User()
                             when{
-                                userDAO.validate(user.nickname, user.password)->{
-                                    controller.user = userDAO
-                                    uf.text = ""
-                                    pf.text = ""
-                                    replaceWith<Home>(ViewTransition.Slide(0.3.seconds, ViewTransition.Direction.DOWN))
+                                //userDAO.validate(user.nickname, user.password)->{
+                                    //controller.user = userDAO
+                                    //uf.text = ""
+                                    //pf.text = ""
+                                    //replaceWith<Home>(ViewTransition.Slide(0.3.seconds, ViewTransition.Direction.DOWN))
                                 }
                                 uf.text.isNullOrBlank()|| pf.text.isNullOrBlank() -> {
                                     showPopUpError("Error", "Empty fields", "Please fill all the fields")

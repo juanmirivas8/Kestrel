@@ -1,5 +1,4 @@
 import tornadofx.*
-import views.Home
 import views.Login
 import views.MyStyles
 
