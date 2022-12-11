@@ -15,6 +15,7 @@
             <property name="javax.persistence.jdbc.password" value="admin"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MariaDBDialect"/>
             <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+            <property name = "hibernate.show_sql" value = "false" />
         </properties>
     </persistence-unit>
 </persistence>
