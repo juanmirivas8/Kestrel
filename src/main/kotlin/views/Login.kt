@@ -39,23 +39,18 @@ class Login : View("Login") {
                     button("Login") {
                         action {
                             val user = User(uf.text, String.encryptSHA256(pf.text))
-                            val userDAO = User()
+
                             when{
-                                //userDAO.validate(user.nickname, user.password)->{
-                                    //controller.user = userDAO
-                                    //uf.text = ""
-                                    //pf.text = ""
-                                    //replaceWith<Home>(ViewTransition.Slide(0.3.seconds, ViewTransition.Direction.DOWN))
-                                }
-                                uf.text.isNullOrBlank()|| pf.text.isNullOrBlank() -> {
-                                    showPopUpError("Error", "Empty fields", "Please fill all the fields")
-                                    uf.text = ""
-                                    pf.text = ""
+                                uf.text.isEmpty()||pf.text.isEmpty() -> showPopUpError("Error", "Incomplete fields", "Please fill all the fields")
+                                user.validate() -> {
+                                    showPopUpSuccess("Success", "Login successful", "Welcome ${user.username}")
+                                    controller.user = user
+                                    replaceWith<Home>( ViewTransition.Slide(0.3.seconds, ViewTransition.Direction.LEFT))
                                 }
                                 else -> {
-                                    showPopUpError("Error", "Wrong credentials", "Please check your credentials")
-                                    uf.text = ""
-                                    pf.text = ""
+                                    showPopUpError("Error", "Login failed", "Wrong username or password")
+                                    uf.clear()
+                                    pf.clear()
                                 }
                             }
                         }
@@ -63,7 +58,7 @@ class Login : View("Login") {
                     button("Sign Up") {
                         action {
                            val user = User(uf.text, String.encryptSHA256(pf.text))
-                            if(UserDAO(user).create()){
+                            if(user.create()){
                                 showPopUpSuccess("Success", "User created", "User created successfully")
                                 uf.text = ""
                                 pf.text = ""

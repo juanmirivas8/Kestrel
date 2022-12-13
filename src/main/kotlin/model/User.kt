@@ -88,6 +88,15 @@ open class User(
         return u
     }
 
+    fun validate(): Boolean {
+        insideContext {
+            val q = manager?.createQuery("SELECT u FROM User WHERE username = ? AND password = ?", User::class.java)
+            q?.setParameter(1, username)
+            q?.setParameter(2, password)
+
+        }
+    }
+
 
 
     override fun toString(): String {
@@ -109,5 +118,7 @@ open class User(
         result = 31 * result + (id ?: 0)
         return result
     }
+
+
 
 }

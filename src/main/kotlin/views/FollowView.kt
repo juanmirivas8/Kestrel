@@ -2,7 +2,6 @@ package views
 
 import controllers.Controller
 import model.User
-import model.UserDAO
 import tornadofx.*
 
 class FollowView(val user: User) : Fragment("My View") {
@@ -12,24 +11,23 @@ class FollowView(val user: User) : Fragment("My View") {
             spacing = 10.px
         }
         button {
-            text = if(controller.user.followed.contains(user)) {
+            text = if(controller.user.following.contains(user)) {
                 "Unfollow"
             } else {
                 "Follow"
             }
             action {
-                val u = UserDAO(controller.user)
-                if(controller.user.followed.contains(user)) {
-                    u.unfollow(user)
+                if(controller.user.following.contains(user)) {
+                    controller.user.unfollow(user)
                     text = "Follow"
                 } else {
-                    u.follow(user)
+                    controller.user.follow(user)
                     text = "Unfollow"
                 }
             }
         }
         label{
-            text = user.nickname
+            text = user.username
         }
     }
 }

@@ -1,6 +1,7 @@
 package model
 
 import utils.Storageable
+import java.time.LocalDateTime
 import javax.persistence.*
 import kotlin.jvm.Transient
 
@@ -12,6 +13,8 @@ open class Comment(
     open var user: User,
     @ManyToOne(fetch = FetchType.LAZY)
     open var post: Post,
+    @Column
+    open var date: java.time.LocalDateTime,
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     override var id: Int? = null
@@ -22,8 +25,12 @@ open class Comment(
         TODO("Not yet implemented")
     }
 
+    fun delete() {
+        TODO("Not yet implemented")
+    }
+
     @Transient
     override var buffer: Comment = this
 
-    constructor(): this("",User(),Post(),null)
+    constructor(): this("",User(),Post(), LocalDateTime.now())
 }

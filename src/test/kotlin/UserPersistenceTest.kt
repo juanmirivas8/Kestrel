@@ -6,7 +6,7 @@ class PersistenceTest {
 
     @Test
     fun createTest(){
-        val u = User("Paco","Paco")
+        val u = User(username = "Paco","Paco")
         assert(u.create())
 
         val u2 = User("Paco","Paco")

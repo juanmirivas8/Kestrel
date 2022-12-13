@@ -3,9 +3,9 @@ package views
 import controllers.Controller
 import javafx.geometry.Pos
 import model.Comment
-import model.CommentDAO
 import model.Post
 import tornadofx.*
+import java.time.LocalDateTime
 
 class CommentView(post: Post) : View("Comments") {
     private val controller = Controller
@@ -20,12 +20,11 @@ class CommentView(post: Post) : View("Comments") {
             }
             bindChildren(oblist){
                 hbox {
-                    label("${it.user.nickname} on ${it.date.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))}: ${it.text}")
+                    label("${it.user.username} on ${it.date.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))}: ${it.content}")
                     if(post.user.id == controller.user.id){
                         button("Delete"){
                             action{
-                                CommentDAO(it).delete()
-                                oblist.remove(it)
+                                it.delete()
                             }
                         }
                     }
@@ -36,10 +35,7 @@ class CommentView(post: Post) : View("Comments") {
             val tf = textfield{}
             button("Comment"){
                 action{
-                    val comment = Comment(text= tf.text, user = controller.user, post = post)
-                    val c = CommentDAO(comment)
-                    c.create()
-                    oblist.add(c)
+                    val comment = Comment(user = controller.user, post = post, content = tf.text, date = LocalDateTime.now())
                     tf.text = ""
                 }
             }

@@ -2,7 +2,6 @@ package views
 
 import controllers.Controller
 import model.Post
-import model.PostDAO
 import tornadofx.*
 
 class PostView(private val post: Post) : Fragment("My View") {
@@ -16,7 +15,7 @@ class PostView(private val post: Post) : Fragment("My View") {
             style{
                 spacing = 10.px
             }
-            label(post.user.nickname)
+            label(post.user.username)
             if(post.edited){
                 label("edited it on: ${post.date.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))}")
             }else{
@@ -24,7 +23,7 @@ class PostView(private val post: Post) : Fragment("My View") {
             }
         }
         center{
-            label(post.text){
+            label(post.content){
                 style{
                     wrapText = true
                 }
@@ -32,16 +31,6 @@ class PostView(private val post: Post) : Fragment("My View") {
         }
         bottom{
              hbox{
-                button{
-                    style{
-                        shape = "M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.26.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"
-                        prefWidth = 30.px
-                        text = post.likes.size.toString()
-                    }
-                    action{
-
-                    }
-                }
                 button("Comments: ${post.comments.size}"){
                     action{
                         CommentView(post).openModal()
@@ -55,7 +44,8 @@ class PostView(private val post: Post) : Fragment("My View") {
                     }
                     button("Delete"){
                         action{
-                            controller.user -= post
+                            //TODO: delete post
+                            controller.user.posts.remove(post)
                         }
                     }
                 }

@@ -9,11 +9,13 @@ import kotlin.jvm.Transient
 open class Post(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    open var user: User,
+    open var user: User = User(),
     @Column
-    open var content: String,
+    open var content: String = "",
     @Column
-    open var date : LocalDateTime,
+    open var date : LocalDateTime = LocalDateTime.now(),
+    @Column
+    open var edited : Boolean = false,
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     override var id: Int? = null
@@ -24,7 +26,7 @@ open class Post(
     open var comments = mutableListOf<Comment>()
     @Transient
     final override var buffer: Post = this
-    constructor() : this(User(), "", LocalDateTime.now(), null)
+    constructor() : this(content = "")
 
     override fun merge() {
         user = buffer.user
