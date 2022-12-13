@@ -27,8 +27,6 @@ fun <T:Storageable<T>> T.insideContext(exec : () ->Unit){
     merge()
 }
 interface Storageable<T>: Serializable{
-    fun create():Boolean
-    fun delete()
     fun merge()
 
     var buffer : T

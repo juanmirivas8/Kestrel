@@ -40,15 +40,16 @@ class PersistenceTest {
     fun deleteTest(){
         val u = User("Paco","Paco")
         u.create()
-        println(u.following)
-
         val u2 = User("Maria","Paco")
         u2.create()
 
         u.follow(u2)
+        u2.update()
+        println(u2.followers)
+
+        u.delete()
 
         u2.update()
-        println(u2.following)
-
+        println(u2.followers)
     }
 }

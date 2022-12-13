@@ -18,15 +18,17 @@ open class User(
 ) : Storageable<User>{
     constructor() : this("", "")
 
-    @ManyToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @ManyToMany(cascade = [CascadeType.PERSIST,CascadeType.MERGE], fetch = FetchType.LAZY)
     @JoinTable(name = "Follows", joinColumns = [JoinColumn(name = "follower")], inverseJoinColumns = [JoinColumn(name = "followed")])
     open var following = mutableSetOf<User>()
     @ManyToMany(mappedBy = "following", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     open var followers = mutableSetOf<User>()
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    open var posts = mutableListOf<Post>()
     @Transient
     final override var buffer: User = this
 
-    override fun create(): Boolean {
+    fun create(): Boolean {
         return try {
             insideContext {
                 buffer = this
@@ -38,7 +40,7 @@ open class User(
         }
     }
 
-    override fun delete() {
+    fun delete() {
         insideContext {
             manager?.remove(buffer)
         }
@@ -46,7 +48,8 @@ open class User(
 
     fun update() {
         insideContext {
-
+            buffer.followers.size
+            buffer.following.size
         }
     }
 
@@ -77,6 +80,12 @@ open class User(
             following.remove(followed)
             followed.followers.remove(this)
         } }
+    }
+
+    fun getFeed(): List<Post>{
+        val u = mutableListOf<Post>()
+
+        return u
     }
 
 
