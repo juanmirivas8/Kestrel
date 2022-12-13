@@ -1,77 +1,54 @@
-
 import model.User
-import org.junit.jupiter.api.assertDoesNotThrow
-import utils.getLogger
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
-
 class PersistenceTest {
-    private val l = getLogger()
+
     @Test
-    fun createReadTest() {
-        assertDoesNotThrow {
-            val u = User("test", "test")
-            u.create()
+    fun createTest(){
+        val u = User("Paco","Paco")
+        assert(u.create())
 
-            val u2 = User()
-            u2.read(u.id!!)
-
-            println(u)
-            println(u2)
-            assertEquals(u, u2)
-        }
+        val u2 = User("Paco","Paco")
+        assertFalse(u2.create())
     }
 
     @Test
-    fun createTwoTimes(){
-        assertDoesNotThrow {
-            val u = User("test", "test")
-            val u2 = User("test", "test")
-            assert(u.create())
-            assertFalse(u2.create())
-        }
+    fun followTest(){
+        val u = User("Paco","Paco")
+        u.create()
+        val u2 = User("Paco2","Paco2")
+        u2.create()
+        u.follow(u2)
+        u2.follow(u)
+    }
+
+    @Test
+    fun unfollowTest(){
+        val u = User("Paco","Paco")
+        u.create()
+        val u2 = User("Paco2","Paco2")
+        u2.create()
+        u.follow(u2)
+        u2.follow(u)
+
+        u.unfollow(u2)
+        u2.unfollow(u)
     }
 
     @Test
     fun deleteTest(){
-        val u = User("test", "test")
+        val u = User("Paco","Paco")
         u.create()
-        println(u)
-        val id = u.id!!
-        u.delete()
-        assertFalse(User().read(id))
-    }
+        println(u.following)
 
-    @Test
-    fun readTest(){
-        val u = User("test", "test")
-        u.create()
+        val u2 = User("Maria","Paco")
+        u2.create()
 
-        val u2 = User()
-        assert(u2.read(u.id!!))
-        assertEquals(u2,u)
+        u.follow(u2)
+
+        u2.update()
+        println(u2.following)
 
     }
-
-    @Test
-    fun updateTest(){
-        val joao = User("joao", "123")
-        joao.create()
-
-        val fakeJoao = User()
-        fakeJoao.read(joao.id!!)
-
-        println(joao.following)
-        println(fakeJoao.following)
-
-        val maria = User("maria", "123")
-        maria.create()
-        joao.follow(maria)
-
-        println(joao.following)
-        println(fakeJoao.following)
-    }
-
 }

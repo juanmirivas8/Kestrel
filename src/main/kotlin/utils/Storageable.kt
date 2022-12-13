@@ -6,17 +6,32 @@ import javax.persistence.Persistence
 
 
 private val managerFactory = Persistence.createEntityManagerFactory("MariaDB")
-private var manager : EntityManager? = null
+var manager : EntityManager? = null
 
 fun <T:Storageable<T>> T.closeManager() {
     manager?.close()
     manager = null
 }
-fun <T:Storageable<T>> T.getManager()  = manager?:managerFactory.createEntityManager()
+fun <T:Storageable<T>> T.getManager(): EntityManager{
+    manager = manager?:managerFactory.createEntityManager()
+    return manager!!
+}
 
+fun <T:Storageable<T>> T.insideContext(exec : () ->Unit){
+    getManager().transaction.begin()
+    if (id != null) buffer = getManager().find(buffer.javaClass, id)
+    exec()
+    getManager().flush()
+    getManager().transaction.commit()
+    closeManager()
+    merge()
+}
 interface Storageable<T>: Serializable{
     fun create():Boolean
-    fun update():Boolean
     fun delete()
-    fun read(int: Int):Boolean
+    fun merge()
+
+    var buffer : T
+
+    var id : Int?
 }

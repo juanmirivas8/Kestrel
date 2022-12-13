@@ -1,11 +1,10 @@
 package model
 
-import utils.Storageable
-import utils.closeManager
-import utils.getManager
+import utils.*
 import java.util.logging.Logger
 import javax.persistence.*
 import javax.transaction.Transactional
+import kotlin.jvm.Transient
 
 @Entity
 open class User(
@@ -15,7 +14,7 @@ open class User(
     open var password: String,
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    open var id : Int? = null
+    override var id : Int? = null
 ) : Storageable<User>{
     constructor() : this("", "")
 
@@ -24,83 +23,60 @@ open class User(
     open var following = mutableSetOf<User>()
     @ManyToMany(mappedBy = "following", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     open var followers = mutableSetOf<User>()
-    override fun create(): Boolean {
-        return try{
-            val manager = getManager()
-            manager.transaction.begin()
-            manager.persist(this)
-            manager.flush()
-            manager.transaction.commit()
-            closeManager()
-            true
-        }catch (e:Throwable){
-            false
-        }
-    }
+    @Transient
+    final override var buffer: User = this
 
-    override fun update(): Boolean {
-        return try{
-            val manager = getManager()
-            manager.transaction.begin()
-           val u = manager.merge(this)
-            manager.persist(u)
-            manager.flush()
-            manager.transaction.commit()
-            closeManager()
-            true
-        }catch (e:Throwable){
-            e.printStackTrace()
+    override fun create(): Boolean {
+        return try {
+            insideContext {
+                buffer = this
+                manager?.persist(buffer)
+            }
+           true
+        }catch (e: Throwable){
             false
         }
     }
 
     override fun delete() {
-        val manager = getManager()
-        manager.transaction.begin()
-        val u = manager.find(User::class.java, id)
-        manager.remove(u)
-        manager.flush()
-        manager.transaction.commit()
-        closeManager()
-        id = null
-    }
-
-    override fun read(int :Int): Boolean {
-        this.apply {
-           val u = getManager().find(User::class.java, int)
-            u?.let {
-                username = u.username
-                password = u.password
-                id = u.id
-                following = u.following
-                followers = u.followers
-            }
-            closeManager()
-            return u != null
+        insideContext {
+            manager?.remove(buffer)
         }
     }
 
-    fun readUser(int :Int): User {
-        this.apply {
-            val u = getManager().find(User::class.java, int)
-            closeManager()
-            return u
+    fun update() {
+        insideContext {
+
         }
     }
 
-    fun follow(user: User): Boolean {
-        if (user.id == id || following.contains(user)) return false
-        following.add(user)
-        user.followers.add(this)
-        return update()
+    override fun merge() {
+        this.apply {
+            username = buffer.username
+            password = buffer.password
+            id = buffer.id
+            following = buffer.following
+            followers = buffer.followers
+        }
+    }
+
+    fun follow(user: User){
+        insideContext { buffer.apply {
+            val followed = getManager().find(User::class.java, user.id)
+
+            if(id == followed.id ||following.contains(followed)) return@insideContext
+            following.add(followed)
+            followed.followers.add(this)
+        } }
     }
 
     fun unfollow(user: User){
         if (user.id == id || !following.contains(user)) return
-        val b1 = user.followers.remove(this)
-        val b = following.remove(user)
-        update()
-        user.update()
+        insideContext { buffer.apply {
+            val followed = following.first{it.id == user.id}
+            following.remove(followed)
+            followed.followers.remove(this)
+        } }
     }
 
 
