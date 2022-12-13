@@ -7,7 +7,7 @@ import model.Post
 import tornadofx.*
 import java.time.LocalDateTime
 
-class MakePostView(post: Post = Post()) : Fragment("My View") {
+class MakePostView(var post: Post = Post()) : Fragment("My View") {
     private val controller = Controller
     override val root = vbox {
     style{
@@ -25,22 +25,23 @@ class MakePostView(post: Post = Post()) : Fragment("My View") {
                 }
             }
         button {
-            if(post.id == 0){
+            if(post.id == null){
                 text = "Post"
                 action{
-                    val p = Post(content = txtarea.text,user = controller.user,
-                        date = LocalDateTime.now(),edited = false)
-                    controller.user.posts.add(p)
+                    post.apply {
+                        content = txtarea.text
+                        date = LocalDateTime.now()
+                        user = controller.user
+                        create()
+
+                    }
+                    post = Post()
                     txtarea.text = ""
                 }
             }else{
                 text = "Edit"
                 action {
-                    post.content = txtarea.text
-                    post.edited = true
-                    post.date = LocalDateTime.now()
-                    controller.user.posts.remove(post)
-                    controller.user.posts.add(post)
+                    post.update(txtarea.text)
                     close()
                 }
             }

@@ -52,4 +52,11 @@ class PersistenceTest {
         u2.update()
         println(u2.followers)
     }
+
+    @Test
+    fun validateTest(){
+        val u = User("Paco","Paco")
+        u.create()
+        assert(User("Paco","Paco").validate())
+    }
 }

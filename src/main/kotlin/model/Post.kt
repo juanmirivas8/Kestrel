@@ -1,6 +1,8 @@
 package model
 
 import utils.Storageable
+import utils.insideContext
+import utils.manager
 import java.time.LocalDateTime
 import javax.persistence.*
 import kotlin.jvm.Transient
@@ -32,5 +34,32 @@ open class Post(
         user = buffer.user
         content = buffer.content
         id = buffer.id
+        date = buffer.date
+        edited = buffer.edited
+    }
+
+    fun update(text : String){
+        insideContext {
+            buffer.content = text
+            buffer.edited = true
+            buffer.date = LocalDateTime.now()
+        }
+    }
+    fun create(): Boolean {
+        return try{
+            insideContext {
+                buffer = this
+                manager?.persist(buffer)
+            }
+            true
+        }catch (e: Throwable){
+            false
+        }
+    }
+
+    fun delete() {
+        insideContext {
+            manager?.remove(buffer)
+        }
     }
 }

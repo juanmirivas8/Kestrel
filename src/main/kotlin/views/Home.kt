@@ -1,6 +1,7 @@
 package views
 
 import controllers.Controller
+import javafx.application.Platform
 import javafx.geometry.Pos
 import javafx.geometry.Side
 import javafx.scene.control.Menu
@@ -9,6 +10,8 @@ import javafx.scene.layout.VBox
 import model.User
 
 import tornadofx.*
+import java.util.*
+import kotlin.concurrent.scheduleAtFixedRate
 
 
 class Home : View("Home") {
@@ -24,7 +27,23 @@ class Home : View("Home") {
         prefHeight = 800.0
         prefWidth = 800.0
         top{
+
             hbox(alignment = Pos.CENTER_RIGHT) {
+                button {
+                    text = "refresh"
+                    action{
+                        Platform.runLater{
+                            controller.user.update()
+                            signout.text = controller.user.username
+                            myPosts.bindChildren(controller.user.posts.toObservable()){
+                                PostView(it).root
+                            }
+                            myfollowed.bindChildren(controller.user.following.toObservable()){
+                                FollowView(it).root
+                            }
+                        }
+                    }
+                }
                 menubar{
                    signout=menu(controller.user.username){
                         item("Log Out").action{

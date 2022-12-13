@@ -1,6 +1,7 @@
 package model
 
 import utils.*
+import java.sql.SQLIntegrityConstraintViolationException
 import java.util.logging.Logger
 import javax.persistence.*
 import javax.transaction.Transactional
@@ -29,7 +30,7 @@ open class User(
     final override var buffer: User = this
 
     fun create(): Boolean {
-        return try {
+       return try{
             insideContext {
                 buffer = this
                 manager?.persist(buffer)
@@ -50,6 +51,7 @@ open class User(
         insideContext {
             buffer.followers.size
             buffer.following.size
+            buffer.posts.forEach { it.comments.size }
         }
     }
 
@@ -60,6 +62,7 @@ open class User(
             id = buffer.id
             following = buffer.following
             followers = buffer.followers
+            posts = buffer.posts
         }
     }
 
@@ -67,7 +70,7 @@ open class User(
         insideContext { buffer.apply {
             val followed = getManager().find(User::class.java, user.id)
 
-            if(id == followed.id ||following.contains(followed)) return@insideContext
+            if(id == followed.id ||following.contains(followed)) return@apply
             following.add(followed)
             followed.followers.add(this)
         } }
@@ -84,17 +87,37 @@ open class User(
 
     fun getFeed(): List<Post>{
         val u = mutableListOf<Post>()
+        insideContext {
+            val q = manager?.createQuery("SELECT p FROM Post p where p.user.id IN SELECT followed", Post::class.java)
 
+        }
+        return u
+    }
+
+    fun searchLike(text: String): List<User>{
+        var u: List<User> = listOf()
+        insideContext {
+            u = manager?.createQuery("SELECT u FROM User u WHERE u.username LIKE :text", User::class.java)
+                ?.setParameter("text", "%$text%")?.resultList ?: listOf()
+        }
         return u
     }
 
     fun validate(): Boolean {
-        insideContext {
-            val q = manager?.createQuery("SELECT u FROM User WHERE username = ? AND password = ?", User::class.java)
-            q?.setParameter(1, username)
-            q?.setParameter(2, password)
+        var res = false
+       insideContext {
+            val q = manager?.createQuery("SELECT u FROM User u WHERE u.username = :id AND u.password = :pw", User::class.java)
+            q?.setParameter("id", username)
+            q?.setParameter("pw", password)
 
+           res = try{
+               buffer = q?.singleResult!!
+               true
+           }catch (e: Throwable){
+               false
+           }
         }
+        return res
     }
 
 

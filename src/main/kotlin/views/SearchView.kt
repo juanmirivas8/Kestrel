@@ -18,7 +18,7 @@ class SearchView : Fragment("Find People") {
                 }
                 tf.textProperty().addListener { _, _, newValue ->
                     ob.clear()
-                    //ob.addAll(UserDAO.searchUser(newValue).filter { it.nickname != controller.user.nickname })
+                    ob.addAll(controller.user.searchLike(newValue).filter { it.username != controller.user.username })
                     ob.remove(controller.user)
                 }
             }

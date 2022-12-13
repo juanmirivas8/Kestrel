@@ -1,6 +1,8 @@
 package model
 
 import utils.Storageable
+import utils.insideContext
+import utils.manager
 import java.time.LocalDateTime
 import javax.persistence.*
 import kotlin.jvm.Transient
@@ -9,9 +11,9 @@ import kotlin.jvm.Transient
 open class Comment(
     @Column
     open var content: String,
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     open var user: User,
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     open var post: Post,
     @Column
     open var date: java.time.LocalDateTime,
@@ -22,12 +24,31 @@ open class Comment(
 
 ):Storageable<Comment> {
     override fun merge() {
-        TODO("Not yet implemented")
+        content = buffer.content
+        user = buffer.user
+        post = buffer.post
+        date = buffer.date
+        id = buffer.id
+    }
+
+    fun create(): Boolean {
+        return try{
+            insideContext {
+                buffer = this
+                manager?.persist(buffer)
+            }
+            true
+        }catch (e: Throwable){
+            false
+        }
     }
 
     fun delete() {
-        TODO("Not yet implemented")
+        insideContext {
+            manager?.remove(buffer)
+        }
     }
+
 
     @Transient
     override var buffer: Comment = this

@@ -58,7 +58,10 @@ class Login : View("Login") {
                     button("Sign Up") {
                         action {
                            val user = User(uf.text, String.encryptSHA256(pf.text))
-                            if(user.create()){
+                            if(uf.text.isNullOrBlank() || pf.text.isNullOrBlank()) {
+                                showPopUpError("Error", "Incomplete fields", "Please fill all the fields")
+                            }
+                            else if(user.create()){
                                 showPopUpSuccess("Success", "User created", "User created successfully")
                                 uf.text = ""
                                 pf.text = ""

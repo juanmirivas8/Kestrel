@@ -44,8 +44,7 @@ class PostView(private val post: Post) : Fragment("My View") {
                     }
                     button("Delete"){
                         action{
-                            //TODO: delete post
-                            controller.user.posts.remove(post)
+                            post.delete()
                         }
                     }
                 }

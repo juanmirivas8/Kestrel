@@ -18,13 +18,19 @@ fun <T:Storageable<T>> T.getManager(): EntityManager{
 }
 
 fun <T:Storageable<T>> T.insideContext(exec : () ->Unit){
-    getManager().transaction.begin()
-    if (id != null) buffer = getManager().find(buffer.javaClass, id)
-    exec()
-    getManager().flush()
-    getManager().transaction.commit()
-    closeManager()
-    merge()
+    try{
+        getManager().transaction.begin()
+        if (id != null) buffer = getManager().find(buffer.javaClass, id)
+        exec()
+        getManager().flush()
+        getManager().transaction.commit()
+        closeManager()
+        merge()
+    }catch (e: Throwable){
+        manager?.transaction?.rollback()
+        closeManager()
+        throw e
+    }
 }
 interface Storageable<T>: Serializable{
     fun merge()

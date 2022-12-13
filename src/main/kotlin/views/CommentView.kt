@@ -25,6 +25,7 @@ class CommentView(post: Post) : View("Comments") {
                         button("Delete"){
                             action{
                                 it.delete()
+                                oblist.remove(it)
                             }
                         }
                     }
@@ -36,7 +37,9 @@ class CommentView(post: Post) : View("Comments") {
             button("Comment"){
                 action{
                     val comment = Comment(user = controller.user, post = post, content = tf.text, date = LocalDateTime.now())
+                    comment.create()
                     tf.text = ""
+                    oblist.add(comment)
                 }
             }
 

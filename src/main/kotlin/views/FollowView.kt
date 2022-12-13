@@ -4,8 +4,13 @@ import controllers.Controller
 import model.User
 import tornadofx.*
 
-class FollowView(val user: User) : Fragment("My View") {
-    private val controller = Controller
+class FollowView(var user: User) : Fragment("My View") {
+
+    private var controller = Controller
+    init {
+        controller = Controller
+        controller.user.update()
+    }
     override val root = hbox {
         style{
             spacing = 10.px
