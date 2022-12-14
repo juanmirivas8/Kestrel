@@ -16,7 +16,7 @@ open class Comment(
     @ManyToOne(fetch = FetchType.EAGER)
     open var post: Post,
     @Column
-    open var date: java.time.LocalDateTime,
+    open var date: LocalDateTime,
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     override var id: Int? = null

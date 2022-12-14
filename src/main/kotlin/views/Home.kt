@@ -41,6 +41,12 @@ class Home : View("Home") {
                             myfollowed.bindChildren(controller.user.following.toObservable()){
                                 FollowView(it).root
                             }
+                            myfollowers.bindChildren(controller.user.followers.toObservable()){
+                                FollowView(it).root
+                            }
+                            feed.bindChildren(controller.user.getFeed().toObservable()){
+                                PostView(it).root
+                            }
                         }
                     }
                 }

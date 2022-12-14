@@ -88,7 +88,16 @@ open class User(
     fun getFeed(): List<Post>{
         val u = mutableListOf<Post>()
         insideContext {
-            val q = manager?.createQuery("SELECT p FROM Post p where p.user.id IN SELECT followed", Post::class.java)
+           buffer.following.forEach {
+                it.posts.forEach{
+                    it.comments.size
+                    u.add(it)
+                }
+            }
+            buffer.posts.forEach{
+                it.comments.size
+                u.add(it)
+            }
 
         }
         return u
