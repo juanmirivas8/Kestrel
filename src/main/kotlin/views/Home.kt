@@ -23,33 +23,33 @@ class Home : View("Home") {
     private lateinit var myCommented :VBox
     private lateinit var feed :VBox
 
+
+    init {
+        Timer().scheduleAtFixedRate(0, 1000) {
+            Platform.runLater {
+                controller.user.update()
+                signout.text = controller.user.username
+                myPosts.bindChildren(controller.user.posts.toObservable()){
+                    PostView(it).root
+                }
+                myfollowed.bindChildren(controller.user.following.toObservable()){
+                    FollowView(it).root
+                }
+                myfollowers.bindChildren(controller.user.followers.toObservable()){
+                    FollowView(it).root
+                }
+                feed.bindChildren(controller.user.getFeed().toObservable()){
+                    PostView(it).root
+                }
+            }
+        }
+    }
     override val root = borderpane {
         prefHeight = 800.0
         prefWidth = 800.0
         top{
 
             hbox(alignment = Pos.CENTER_RIGHT) {
-                button {
-                    text = "refresh"
-                    action{
-                        Platform.runLater{
-                            controller.user.update()
-                            signout.text = controller.user.username
-                            myPosts.bindChildren(controller.user.posts.toObservable()){
-                                PostView(it).root
-                            }
-                            myfollowed.bindChildren(controller.user.following.toObservable()){
-                                FollowView(it).root
-                            }
-                            myfollowers.bindChildren(controller.user.followers.toObservable()){
-                                FollowView(it).root
-                            }
-                            feed.bindChildren(controller.user.getFeed().toObservable()){
-                                PostView(it).root
-                            }
-                        }
-                    }
-                }
                 menubar{
                    signout=menu(controller.user.username){
                         item("Log Out").action{
@@ -77,15 +77,6 @@ class Home : View("Home") {
                         myPosts = vbox{}
                    }
 
-               }
-               item("Liked Posts"){
-
-               }
-               item("Commented Posts"){
-                   scrollpane {
-                       isFitToWidth = true
-                       myCommented = vbox{}
-                   }
                }
            }
         }
